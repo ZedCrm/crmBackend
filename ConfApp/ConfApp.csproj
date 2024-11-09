@@ -19,4 +19,8 @@
     <ProjectReference Include="..\App\App.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Rep\Base\" />
+  </ItemGroup>
+
 </Project>

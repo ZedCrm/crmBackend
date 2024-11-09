@@ -9,8 +9,12 @@ namespace MyFrameWork.AppTool
     public class OPT
     {
         public bool IsSucceeded { get; set; }
-        public required string Message { get; set; }
-        
+        public  string Message { get; set; }
+        public OPT()
+        {
+            IsSucceeded = true;
+        }
+
         public OPT Succeeded(string message = "عملیات با موفقیت انجام شد")
         {
             IsSucceeded = true;

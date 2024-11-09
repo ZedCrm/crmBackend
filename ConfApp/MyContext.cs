@@ -1,11 +1,8 @@
 ﻿using ConfApp.Mapping;
 using Domain.Objects.Base;
+using Domain.Objects.Shop;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ConfApp
 {
@@ -13,6 +10,7 @@ namespace ConfApp
     {
         #region DbSet 
         public DbSet<Person> Persons { get; set; }
+        public DbSet<Product> Products { get; set; }
         #endregion
         public MyContext(DbContextOptions<MyContext> options) : base(options)
         {

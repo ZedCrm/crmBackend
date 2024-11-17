@@ -1,7 +1,10 @@
 ﻿using App.Contracts.Object.Base;
+using App.Contracts.Object.Shop.ProductCon;
 using App.Object.Base;
+using App.Object.Shop.ProductApp;
 using ConfApp;
 using ConfApp.Rep;
+using ConfApp.Rep.Inv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,8 +15,10 @@ namespace Infrastructure
         public static void AddCRMManagement(IServiceCollection service, string connectionstring)
         {
             //service.AddTransient<IProductApplication, ProductApplication>();
-            service.AddTransient<IPersonApp, PersonApp>();
-            service.AddTransient<IPersonRep, PersonRep>();
+            service.AddScoped<IPersonApp, PersonApp>();
+            service.AddScoped<IPersonRep, PersonRep>();
+            service.AddScoped<IProductApp, ProductApp>();
+            service.AddScoped<IProductRep, ProductRep>();
 
 
             service.AddDbContext<MyContext>(c =>

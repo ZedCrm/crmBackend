@@ -1,4 +1,5 @@
 ﻿using App;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ConfApp
 {
-    public class BaseRep<T, TKey> : IBaseRep<T, TKey> where T : class
+    public abstract class BaseRep<T, TKey> : IBaseRep<T, TKey> where T : class
     {
         private readonly MyContext _ctx;
         public BaseRep(MyContext ctx)
@@ -45,6 +46,18 @@ namespace ConfApp
         public List<T> Get()
         {
             return _ctx.Set<T>().ToList();
+        }
+
+        public  List<T> GetFiltered(Expression<Func<T, bool>> filter = null)
+        {
+            IQueryable<T> query = _ctx.Set<T>();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return  query.ToList();
         }
 
         public void SaveChanges()

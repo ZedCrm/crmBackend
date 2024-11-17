@@ -10,6 +10,7 @@ namespace App
     public interface IBaseRep<T, TKey> where T : class
     {
         T Get(TKey id);
+        List<T>  GetFiltered(Expression<Func<T, bool>> filter = null);
         List<T> Get();
         void Create(T entity);
         void Delete(T entity);

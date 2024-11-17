@@ -9,6 +9,7 @@ namespace Domain.Objects.Shop
     public class Product
     {
         public int Id { get; set; }
+        public string? ProductCode { get; set; }
         public string Name { get; set; }
         public int Price { get; set; }
         public int CountType { get; set; }

@@ -1,4 +1,5 @@
 ﻿using App.Contracts.Object.Shop.ProductCon;
+using AutoMapper;
 using Domain.Objects.Shop;
 using MyFrameWork.AppTool;
 using System;
@@ -13,11 +14,17 @@ namespace App.Object.Shop.ProductApp
     public class ProductApp : IProductApp
     {
         private readonly IProductRep _productRep;
+        private readonly IMapper _mapper;
 
-        public ProductApp(IProductRep productRep)
+        public ProductApp(IProductRep productRep , IMapper mapper)
         {
             _productRep = productRep;
+            this._mapper = mapper;
         }
+
+
+
+        //Create method 
         public OPT Create(ProductCreate productCreate)
         {
             OPT opt = new OPT();
@@ -25,13 +32,7 @@ namespace App.Object.Shop.ProductApp
             if (codeExist) { opt.Failed(" . کد محصول تکراریست "); }
             else
             {
-                var product = new Product
-                {
-                    Name = productCreate.Name,
-                    Price = productCreate.Price,
-                    CountType = productCreate.CountType,
-                    ProductCode = productCreate.ProductCode,
-                };
+                var product = _mapper.Map<Product>(productCreate);
                 _productRep.Create(product);
                 opt.Succeeded();
                 _productRep.SaveChanges();
@@ -50,18 +51,40 @@ namespace App.Object.Shop.ProductApp
 
         }
 
-        public List<ProductView> GetAll()
-        {
+        public OPTResult<ProductView> GetAll(Pagination pagination)
+        {    // دریافت تمام محصولات  
             var products = _productRep.Get();
-            return products.Select(c=> new ProductView
-            {
-                Id= c.Id,
-                Name= c.Name,
-                Price= c.Price,
-                ProductCode=c.ProductCode,
 
-            }).ToList();
+            // تبدیل داده‌ها به نوع ViewModel  
+            var data = _mapper.Map<List<ProductView>>(products);
+
+            // تعداد کل رکوردها  
+            var totalRecords = data.Count;
+
+            // انجام صفحه‌بندی با استفاده از متدهای Pagination  
+            var pagedData = data
+                .Skip(pagination.CalculateSkip())
+                .Take(pagination.PageSize)
+                .ToList();
+
+            // تعداد کل صفحات  
+            var totalPages = pagination.CalculateTotalPages(totalRecords);
+
+            // آماده‌سازی و بازگشت نتیجه  
+            return new OPTResult<ProductView>
+            {
+                IsSucceeded = true,
+                Message = "داده با موفقیت بارگذاری شد.",
+                Data = pagedData,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages,
+                PageNumber = pagination.PageNumber,
+                PageSize = pagination.PageSize
+            };
+
         }
+
+
         public List<ProductView> SearchProducts(ProductSearchCriteria criteria)
         {
             Expression<Func<Product, bool>> filter = product => true; 
@@ -83,15 +106,13 @@ namespace App.Object.Shop.ProductApp
 
 
            var products = _productRep.GetFiltered(filter);
-            return products.Select(c => new ProductView
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Price = c.Price,
-                ProductCode = c.ProductCode,
-
-            }).ToList();
+            return _mapper.Map<List<ProductView>>(products);
         }
     }
+
+
+
+
+
     public interface IProductRep : IBaseRep<Product, int> { }
 }

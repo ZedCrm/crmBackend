@@ -13,7 +13,7 @@ namespace App.Contracts.Object.Shop.ProductCon
         public string ProductCode { get; set; }
         public string Name { get; set; }
         public int Price { get; set; }
-        public int CountType { get; set; }
+        
 
     }
     public class ProductCreate : ProductView

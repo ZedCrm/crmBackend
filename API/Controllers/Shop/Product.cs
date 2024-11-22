@@ -1,5 +1,6 @@
 ﻿using App.Contracts.Object.Shop.ProductCon;
 using Microsoft.AspNetCore.Mvc;
+using MyFrameWork.AppTool;
 
 namespace API.Controllers.Shop
 {
@@ -16,11 +17,13 @@ namespace API.Controllers.Shop
         }
 
 
-        [HttpGet]
-        public ActionResult<IEnumerable<ProductView>> Index()
+        [HttpPost]
+        
+        public ActionResult<OPTResult<ProductView>> Index([FromBody] Pagination pagination)
         {
-            return productApp.GetAll();
+            return productApp.GetAll(pagination);
         }
+
         [HttpGet]
         [Route("/search")]
         public ActionResult<IEnumerable<ProductView>> search([FromQuery] string? name ,
@@ -40,6 +43,7 @@ namespace API.Controllers.Shop
 
 
         [HttpPost]
+        [Route("/creat")]
         public ActionResult create([FromBody] ProductCreate product)
         {
 
@@ -50,6 +54,7 @@ namespace API.Controllers.Shop
         }
 
         [HttpDelete]
+        [Route("/delete")]
         public OkResult delete(int id)
         {
             productApp.DeleteBy(id);

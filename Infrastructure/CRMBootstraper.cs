@@ -1,7 +1,9 @@
-﻿using App.Contracts.Object.Base;
+﻿using App;
+using App.Contracts.Object.Base;
 using App.Contracts.Object.Shop.ProductCon;
 using App.Object.Base;
 using App.Object.Shop.ProductApp;
+using AutoMapper;
 using ConfApp;
 using ConfApp.Rep;
 using ConfApp.Rep.Inv;
@@ -19,6 +21,13 @@ namespace Infrastructure
             service.AddScoped<IPersonRep, PersonRep>();
             service.AddScoped<IProductApp, ProductApp>();
             service.AddScoped<IProductRep, ProductRep>();
+
+
+
+            // Register AutoMapper  
+            service.AddAutoMapper(typeof(ClassMapping));
+
+
 
 
             service.AddDbContext<MyContext>(c =>

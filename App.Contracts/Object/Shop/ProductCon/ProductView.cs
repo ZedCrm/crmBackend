@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyFrameWork.AppTool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace App.Contracts.Object.Shop.ProductCon
         public int CountType { get; set; }
 
     }
-    public class ProductSearchCriteria
+    public class ProductSearchCriteria : Pagination
     {
         public string? Name { get; set; }
         public int? MinPrice { get; set; }

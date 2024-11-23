@@ -18,25 +18,18 @@ namespace API.Controllers.Shop
 
 
         [HttpPost]
-        
+        [Route("/GetAll")]
         public ActionResult<OPTResult<ProductView>> Index([FromBody] Pagination pagination)
         {
             return productApp.GetAll(pagination);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/search")]
-        public ActionResult<IEnumerable<ProductView>> search([FromQuery] string? name ,
-            [FromQuery] int? minprice , [FromQuery] int? maxprice
+        public ActionResult<IEnumerable<ProductView>> search([FromBody]  ProductSearchCriteria productSearch
             )
         {
-            var productSearch = new ProductSearchCriteria()
-                                    {
-                Name =name ?? null
-                ,
-                MinPrice = minprice ?? 0
-                ,
-                MaxPrice=maxprice ?? 0};
+            
             return productApp.SearchProducts(productSearch);
         }
 

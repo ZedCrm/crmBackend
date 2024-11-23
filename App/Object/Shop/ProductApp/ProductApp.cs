@@ -53,19 +53,15 @@ namespace App.Object.Shop.ProductApp
 
         public OPTResult<ProductView> GetAll(Pagination pagination)
         {    // دریافت تمام محصولات  
-            var products = _productRep.Get();
+            var products = _productRep.Get(pagination);
 
             // تبدیل داده‌ها به نوع ViewModel  
             var data = _mapper.Map<List<ProductView>>(products);
 
             // تعداد کل رکوردها  
-            var totalRecords = data.Count;
+            var totalRecords = _productRep.Count();
 
-            // انجام صفحه‌بندی با استفاده از متدهای Pagination  
-            var pagedData = data
-                .Skip(pagination.CalculateSkip())
-                .Take(pagination.PageSize)
-                .ToList();
+            
 
             // تعداد کل صفحات  
             var totalPages = pagination.CalculateTotalPages(totalRecords);
@@ -75,7 +71,7 @@ namespace App.Object.Shop.ProductApp
             {
                 IsSucceeded = true,
                 Message = "داده با موفقیت بارگذاری شد.",
-                Data = pagedData,
+                Data = data,
                 TotalRecords = totalRecords,
                 TotalPages = totalPages,
                 PageNumber = pagination.PageNumber,
@@ -85,7 +81,7 @@ namespace App.Object.Shop.ProductApp
         }
 
 
-        public List<ProductView> SearchProducts(ProductSearchCriteria criteria)
+        public List<ProductView> SearchProducts(ProductSearchCriteria criteria )
         {
             Expression<Func<Product, bool>> filter = product => true; 
 
@@ -105,7 +101,7 @@ namespace App.Object.Shop.ProductApp
             }
 
 
-           var products = _productRep.GetFiltered(filter);
+           var products = _productRep.GetFiltered(filter , criteria);
             return _mapper.Map<List<ProductView>>(products);
         }
     }

@@ -10,7 +10,8 @@ namespace App
         public ClassMapping()
         {
             CreateMap<Product, ProductView>();
-            CreateMap<ProductCreate , Product>();
+            CreateMap<ProductCreate , Product>().
+                ForMember(p=>p.Id , o=>o.MapFrom(pc=>pc.CountTypeId)).ForMember(p => p.Id, o => o.Ignore());
         }
     }
 }

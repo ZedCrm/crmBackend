@@ -5,9 +5,7 @@ using MyFrameWork.AppTool;
 namespace API.Controllers.Shop
 {
 
-    [ApiController]
-    [Route("[controller]")]
-    public class Product : ControllerBase
+    public class Product : BaseController
     {
         private readonly IProductApp productApp;
 
@@ -19,30 +17,36 @@ namespace API.Controllers.Shop
 
         [HttpPost]
         [Route("/GetAll")]
-        public ActionResult<OPTResult<ProductView>> Index([FromBody] Pagination pagination)
+        public async Task<ActionResult<OPTResult<ProductView>>> Index([FromBody] Pagination pagination)
         {
-            return productApp.GetAll(pagination);
+             return await productApp.GetAll(pagination);
+
+             
+
+            
         }
 
         [HttpPost]
         [Route("/search")]
-        public ActionResult<IEnumerable<ProductView>> search([FromBody]  ProductSearchCriteria productSearch
+        public async Task<ActionResult<IEnumerable<ProductView>>> search([FromBody]  ProductSearchCriteria productSearch
             )
         {
             
-            return productApp.SearchProducts(productSearch);
+            return await productApp.SearchProducts(productSearch);
+            ;
         }
 
 
 
         [HttpPost]
         [Route("/creat")]
-        public ActionResult create([FromBody] ProductCreate product)
+        public async Task<ActionResult> create([FromBody] ProductCreate product)
         {
 
-            var opt = productApp.Create(product);
+            var opt = await productApp.Create(product);
             if (opt.IsSucceeded) { return Ok(); }
             else { return Ok ( new { warning = opt.Message } ); }
+            
 
         }
 
@@ -52,6 +56,7 @@ namespace API.Controllers.Shop
         {
             productApp.DeleteBy(id);
             return Ok();
+            
         }
     }
 }

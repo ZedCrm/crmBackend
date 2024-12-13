@@ -32,8 +32,9 @@ namespace Infrastructure
 
             service.AddDbContext<MyContext>(c =>
             {
-                c.UseSqlServer(connectionstring, b => b.MigrationsAssembly("Infrastructure"));
-            });
+                c.UseSqlServer(connectionstring, b => b.MigrationsAssembly("Infrastructure")
+                ).EnableSensitiveDataLogging().LogTo(Console.WriteLine);
+            }, ServiceLifetime.Scoped);
 
         }
     }

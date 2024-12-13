@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Objects.Shop
 {
-    public class Inv
+    public class Inv : BaseDomain
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -5,10 +5,11 @@ namespace App.Contracts.Object.Shop.ProductCon
 {
     public interface IProductApp
     {
-        public List<ProductView> SearchProducts(ProductSearchCriteria criteria);
-        OPTResult<ProductView> GetAll(Pagination pagination);
-        OPT Create(ProductCreate productCreate);
+        public Task<List<ProductView>> SearchProducts(ProductSearchCriteria criteria);
+        Task<OPTResult<ProductView>> GetAll(Pagination pagination);
+        Task<OPT> Create(ProductCreate productCreate);
         OPT DeleteBy(int productid);
+        //public void Dispose();
     }
 
 }

@@ -14,11 +14,11 @@ namespace App.Object.Base
         {
             _ctx = personRep;
         }
-        public List<PersonView> personViews()
+        public async Task<List<PersonView>> personViews()
         {
-            var persons = _ctx.Get();
+            var persons = await _ctx.GetAsync();
 
-            return persons.Select(c => new PersonView
+            return  persons.Select(c => new PersonView
             {
                 Id = c.Id,
                 Name = c.Name,

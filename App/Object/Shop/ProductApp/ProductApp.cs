@@ -13,53 +13,66 @@ namespace App.Object.Shop.ProductApp
 {
     public class ProductApp : IProductApp
     {
+        #region constructor
         private readonly IProductRep _productRep;
         private readonly IMapper _mapper;
 
-        public ProductApp(IProductRep productRep , IMapper mapper)
+        public ProductApp(IProductRep productRep, IMapper mapper)
         {
             _productRep = productRep;
             this._mapper = mapper;
+            Console.WriteLine($"ProductApp Instance Created: {GetHashCode()}");
         }
+        #endregion
 
 
 
         //Create method 
-        public OPT Create(ProductCreate productCreate)
+        public async Task<OPT> Create(ProductCreate productCreate)
         {
             OPT opt = new OPT();
-            var codeExist = _productRep.Exist(c=>c.ProductCode == productCreate.ProductCode);
+            var codeExist = await _productRep.ExistAsync(c=>c.ProductCode == productCreate.ProductCode);
             if (codeExist) { opt.Failed(" . کد محصول تکراریست "); }
+            else if (productCreate.Price <= 0) { opt.Failed(" . قیمت محصول باید بیشتر از صفر باشد"); }
             else
             {
                 var product = _mapper.Map<Product>(productCreate);
-                _productRep.Create(product);
-                opt.Succeeded();
-                _productRep.SaveChanges();
+               await  _productRep.CreateAsync(product);
+                opt.Succeeded($".محصول مورد نظر ایجاد شد  {productCreate.Name.ToString()}");
+                await _productRep.SaveChangesAsync();
             }
 
             return opt;
         }
 
+
+
+
+
         public OPT DeleteBy(int productid)
         {
             OPT opt = new OPT();
-            _productRep.DeleteByID(productid);
-            opt.Succeeded();
-            _productRep.SaveChanges();
+            
+               _productRep.DeleteById(productid);
+            opt.Succeeded($"محصول حذف گردید");
+             _productRep.SaveChangesAsync();
+
             return opt;
 
         }
 
-        public OPTResult<ProductView> GetAll(Pagination pagination)
+
+
+
+        public async Task<OPTResult<ProductView>> GetAll(Pagination pagination)
         {    // دریافت تمام محصولات  
-            var products = _productRep.Get(pagination);
+            var products = await _productRep.GetAsync(pagination);
 
             // تبدیل داده‌ها به نوع ViewModel  
-            var data = _mapper.Map<List<ProductView>>(products);
+            var data =  _mapper.Map<List<ProductView>>(products);
 
             // تعداد کل رکوردها  
-            var totalRecords = _productRep.Count();
+            var totalRecords = await _productRep.CountAsync();
 
             
 
@@ -81,7 +94,10 @@ namespace App.Object.Shop.ProductApp
         }
 
 
-        public List<ProductView> SearchProducts(ProductSearchCriteria criteria )
+
+
+
+        public async Task<List<ProductView>> SearchProducts(ProductSearchCriteria criteria )
         {
             Expression<Func<Product, bool>> filter = product => true; 
 
@@ -101,9 +117,10 @@ namespace App.Object.Shop.ProductApp
             }
 
 
-           var products = _productRep.GetFiltered(filter , criteria);
+           var products = await _productRep.GetFilteredAsync(filter , criteria);
             return _mapper.Map<List<ProductView>>(products);
         }
+     
     }
 
 

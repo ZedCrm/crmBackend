@@ -2,6 +2,6 @@
 {
     public interface IPersonApp
     {
-        List<PersonView> personViews();
+        Task<List<PersonView>> personViews();
     }
 }

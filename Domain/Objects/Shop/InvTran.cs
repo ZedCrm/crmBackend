@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Objects.Shop
 {
-    public class InvTran
+    public class InvTran : BaseDomain
     {
         public int Id { get; set; }
         public DateTime CreateTime { get; set; }

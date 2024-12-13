@@ -1,4 +1,5 @@
 ﻿using App.Contracts.Object.Shop.ProductCon;
+using Domain.Objects;
 using MyFrameWork.AppTool;
 using System;
 using System.Collections.Generic;
@@ -9,17 +10,18 @@ using System.Threading.Tasks;
 
 namespace App
 {
-    public interface IBaseRep<T, TKey> where T : class
+    public interface IBaseRep<T, TKey> : IDisposable where T : BaseDomain
     {
+        Task<T> GetAsync(TKey id);
         T Get(TKey id);
-        List<T>  GetFiltered(Expression<Func<T, bool>> filter = null , ProductSearchCriteria criteria = null);
-        List<T> Get();
-        List<T> Get(Pagination pagination );
-        void Create(T entity);
+        Task<List<T>>  GetFilteredAsync(Expression<Func<T, bool>> filter = null , ProductSearchCriteria criteria = null);
+        Task<List<T>> GetAsync();
+        Task<List<T>> GetAsync(Pagination pagination );
+        Task CreateAsync(T entity);
         void Delete(T entity);
-        void DeleteByID(TKey id);
-        int Count();
-        bool Exist(Expression<Func<T, bool>> expression  );
-        void SaveChanges();
+        void DeleteById(TKey id);
+        Task<int> CountAsync();
+        Task<bool> ExistAsync(Expression<Func<T, bool>> expression  );
+        Task SaveChangesAsync();
     }
 }

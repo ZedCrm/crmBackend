@@ -1,5 +1,6 @@
 ﻿using App;
 using App.Contracts.Object.Shop.ProductCon;
+using Domain.Objects;
 using Microsoft.EntityFrameworkCore;
 using MyFrameWork.AppTool;
 using System;
@@ -10,55 +11,82 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ConfApp
+
 {
-    public abstract class BaseRep<T, TKey> : IBaseRep<T, TKey> where T : class
+    public abstract class BaseRep<T, TKey> : IBaseRep<T, TKey> where T : BaseDomain
     {
+        #region constructor
         private readonly MyContext _ctx;
         public BaseRep(MyContext ctx)
         {
             _ctx = ctx;
         }
+        #endregion
 
-        public int Count()
+
+
+
+        public async Task<int> CountAsync()
         {
-            return _ctx.Set<T>().Count();  
+            return await _ctx.Set<T>().Where(e => !e.IsDeleted).CountAsync();  
         }
 
-        public void Create(T entity)
+
+
+
+        public async Task CreateAsync(T entity)
         {
-            _ctx.Add(entity);
+            entity.CreateDate = DateTime.Now;
+            await _ctx.AddAsync(entity);
         }
 
-        public void Delete(T entity)
+
+
+        public  void Delete(T entity)
         {
-            _ctx.Remove(entity);
+            entity.UpdateDate = DateTime.Now;
+            entity.IsDeleted = true;
+             _ctx.Update(entity);
         }
 
-        public void DeleteByID(TKey id)
+
+        
+        public void DeleteById(TKey id)
         {
-            var TforDelete = this.Get(id);
+            var TforDelete =  this.Get(id);
+
+            if (TforDelete == null)
+            {
+                Console.WriteLine($"No item found with ID: {id}");
+                return; // یا می‌توانید استثنایی پرتاب کنید  
+            }
             this.Delete(TforDelete);
         }
 
-        public bool Exist(Expression<Func<T, bool>> expression)
+      
+
+        public async Task<bool> ExistAsync(Expression<Func<T, bool>> expression)
         {
-            return _ctx.Set<T>().Any(expression);
+             return await _ctx.Set<T>().AnyAsync(expression);
         }
 
-        public T Get(TKey id)
+        public async Task<T> GetAsync(TKey id)
         {
+            
 
-            return _ctx.Find<T>(id);
+                return await _ctx.Set<T>().FindAsync(id);
+
+            
         }
 
-        public List<T> Get()
+        public async  Task<List<T>> GetAsync()
         {
-            return _ctx.Set<T>().ToList();
+            return await _ctx.Set<T>().Where(e => !e.IsDeleted).AsNoTracking().ToListAsync();
         }
 
-        public List<T> Get(Pagination pagination)
+        public async Task<List<T>> GetAsync(Pagination pagination)
         {
-            var query = _ctx.Set<T>().AsQueryable();
+            var query = _ctx.Set<T>().Where(e => !e.IsDeleted).AsQueryable();
 
             // Sorting  
             if (!string.IsNullOrEmpty(pagination.SortBy))
@@ -79,9 +107,9 @@ namespace ConfApp
             }
 
             // Apply pagination  
-            return query.Skip(pagination.CalculateSkip())
-                        .Take(pagination.PageSize)
-                        .ToList();
+            return await query.Skip(pagination.CalculateSkip())
+                        .Take(pagination.PageSize).AsNoTracking()
+                        .ToListAsync();
         }
 
 
@@ -90,10 +118,10 @@ namespace ConfApp
 
 
 
-        public List<T> GetFiltered(Expression<Func<T, bool>> filter = null, ProductSearchCriteria pagination = null)
+        public async Task<List<T>> GetFilteredAsync(Expression<Func<T, bool>> filter = null, ProductSearchCriteria pagination = null)
         {
 
-            IQueryable<T> query = _ctx.Set<T>();
+            IQueryable<T> query = _ctx.Set<T>().Where(e => !e.IsDeleted);
 
             // Apply filter if provided  
             if (filter != null)
@@ -127,7 +155,7 @@ namespace ConfApp
                              .Take(pagination.PageSize);
             }
 
-            return query.ToList();
+            return  await query.AsNoTracking().ToListAsync();
         }
 
 
@@ -135,9 +163,25 @@ namespace ConfApp
 
 
 
-        public void SaveChanges()
+        public async Task SaveChangesAsync()
         {
-            _ctx.SaveChanges();
+            await _ctx.SaveChangesAsync();
+        }
+
+        public void Dispose()
+        {
+            Console.WriteLine($"MyContext disposed at {DateTime.Now}");
+            _ctx?.Dispose();
+        }
+
+        public T Get(TKey id)
+        {
+            return _ctx.Set<T>().Find(id);
+        }
+
+        public Task DeleteByIDAsinc(TKey id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

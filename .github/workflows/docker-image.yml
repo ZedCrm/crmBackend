@@ -28,8 +28,8 @@ jobs:
           fi
 
       - name: Build Docker Image
-        run: docker build -t my_image:latest .
+        run: sudo docker build -t my_image:latest .
 
       - name: Run Docker Container
         run: |
-          docker run -d --name my_container -p 80:80 my_image:latest
+          sudo docker run -d --name my_container -p 80:80 my_image:latest

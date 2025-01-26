@@ -11,7 +11,7 @@ COPY *.sln ./
 COPY . ./
 
 # Restore dependencies using the solution file
-RUN dotnet restore MySolution.sln
+RUN dotnet restore ZCRM.sln
 
 
 

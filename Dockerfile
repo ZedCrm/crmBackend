@@ -8,13 +8,12 @@ WORKDIR /app
 COPY *.sln ./
 
 # Copy all project files while maintaining their directory structure
-COPY src/ ./src/
+COPY ZCRM/ ./ZCRM/
 
 # Restore dependencies using the solution file
 RUN dotnet restore MySolution.sln
 
-# Copy the rest of the application source code
-COPY . ./
+
 
 # Build and publish the app
 RUN dotnet publish -c Release -o /out

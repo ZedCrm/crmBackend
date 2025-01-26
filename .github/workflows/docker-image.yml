@@ -32,4 +32,5 @@ jobs:
 
       - name: Run Docker Container
         run: |
+          sudo docker ps -a -q -f name=my_container | grep -q . && sudo docker rm -f my_container
           sudo docker run -d --name my_container -p 80:80 my_image:latest

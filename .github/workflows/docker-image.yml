@@ -17,13 +17,13 @@ jobs:
 
       - name: Stop and Remove Existing Container (if exists)
         run: |
-          if [ "$(docker ps -q -f name=my_container)" ]; then
+          if [ "$(sudo docker ps -q -f name=my_container)" ]; then
             sudo docker stop my_container && docker rm my_container
           fi
 
       - name: Remove Old Docker Image (if exists)
         run: |
-          if [ "$(docker images -q my_image:latest)" ]; then
+          if [ "$(sudo docker images -q my_image:latest)" ]; then
             sudo docker rmi my_image:latest
           fi
 

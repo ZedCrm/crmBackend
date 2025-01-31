@@ -49,16 +49,20 @@ namespace App.Object.Shop.ProductApp
 
 
 
-        public OPT DeleteBy(int productid)
+        public OPT DeleteBy(List<int> productids)
         {
             OPT opt = new OPT();
-            
-               _productRep.DeleteById(productid);
-            opt.Succeeded($"محصول حذف گردید");
-             _productRep.SaveChangesAsync();
 
+            foreach (var productid in productids)
+            {
+                _productRep.DeleteById(productid);  // حذف محصول با id خاص
+            }
+
+            // صبر کردن برای اتمام عملیات حذف و ذخیره تغییرات
+            _productRep.SaveChangesAsync();
+
+            opt.Succeeded("محصولات حذف گردید");
             return opt;
-
         }
 
 

@@ -52,11 +52,10 @@ namespace API.Controllers.Shop
 
         [HttpDelete]
         [Route("/delete")]
-        public OkResult delete(int id)
+        public OkResult delete([FromBody] List<int> ids)
         {
-            productApp.DeleteBy(id);
+            productApp.DeleteBy(ids); // تغییر متد DeleteBy برای پذیرش لیست آی‌دی‌ها
             return Ok();
-            
         }
     }
 }
